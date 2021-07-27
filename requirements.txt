@@ -1,4 +1,5 @@
 pandas
+lxml # for pandas html parsing
 numpy
 matplotlib
 streamlit
