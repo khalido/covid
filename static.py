@@ -2,7 +2,6 @@
 matplotlib charts go here
 """
 
-import streamlit as st
 import pandas as pd
 
 import matplotlib.dates as mdates
@@ -98,8 +97,10 @@ def make_plot(df):
     )
 
     # final plot tweaks
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
     date_form = mdates.DateFormatter("%m/%d")
     ax.xaxis.set_major_formatter(date_form)
     ax.legend(loc="upper left", fontsize=13)
 
-    st.pyplot(fig)
+    return fig

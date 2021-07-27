@@ -11,6 +11,8 @@ import pandas as pd
 import data
 import static
 
+st.set_page_config(layout="wide")
+
 st.header("NSW Covid Dashboard")
 
 with st.beta_expander("This page -does- will do stuff"):
@@ -40,4 +42,9 @@ with st.beta_expander("This page -does- will do stuff"):
 # https://docs.streamlit.io/en/stable/add_state_app.html
 
 df = data.get_data()
-static.make_plot(df)
+fig = static.make_plot(df)
+st.pyplot(fig)
+
+st.subheader("Raw Data")
+st.write("this data is a bit too busy....")
+st.write(df)
