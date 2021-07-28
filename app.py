@@ -41,7 +41,13 @@ with st.beta_expander("This page -does- will do stuff"):
 # we will need session state sooner or later, see
 # https://docs.streamlit.io/en/stable/add_state_app.html
 
-df = data.get_data()
+@st.cache(ttl=3600)
+def get_data():
+    df = data.get_data()
+    print(f"using dataframe with shape {df.shape}")
+    return df
+
+
 fig = static.make_plot(df)
 st.pyplot(fig)
 

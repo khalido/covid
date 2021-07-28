@@ -2,8 +2,6 @@
 Loads data from interwebs"""
 
 import pandas as pd
-import streamlit as st
-
 
 
 def get_total_cases(start_date: str="27 June 2021"):
@@ -40,7 +38,6 @@ def get_wild_cases():
     
     return df
 
-@st.cache(ttl=3600)
 def get_data():
     """returns cleaned and joined data"""
     df_wild = get_wild_cases()
