@@ -33,21 +33,23 @@ with st.beta_expander("This page -does- will do stuff"):
 
 # col1, col2, col3, col4 = st.beta_columns(4)
 
-#for i, col in enumerate(st.beta_columns(3)):
+# for i, col in enumerate(st.beta_columns(3)):
 #    col.button(f"R_{i+1}")
-    # col.bar_chart(np.random.random((10, 3)))
+# col.bar_chart(np.random.random((10, 3)))
 
 
 # we will need session state sooner or later, see
 # https://docs.streamlit.io/en/stable/add_state_app.html
 
-@st.cache(ttl=3600)
+
+@st.cache(ttl=1600, suppress_st_warning=True)
 def get_data():
     df = data.get_data()
     print(f"using dataframe with shape {df.shape}")
     return df
 
 
+df = get_data()
 fig = static.make_plot(df)
 st.pyplot(fig)
 
