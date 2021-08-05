@@ -51,6 +51,10 @@ def get_data():
 
 df = get_data()
 fig = static.make_plot(df)
+
+st.markdown("""
+The orange line is the number of cases Full Infectious + Partly  + Unknown cases which are likely isolating.
+""")
 st.pyplot(fig)
 
 st.subheader("Raw Data")

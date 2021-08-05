@@ -1,6 +1,7 @@
 """
 Loads data from interwebs"""
 
+import numpy as np
 import pandas as pd
 import streamlit as st
 
@@ -58,11 +59,26 @@ def get_data():
     assert df_wild.shape[0] == df_total.shape[0]
 
     df = pd.merge(df_wild, df_total, on=["Date"])
-    
     df["Isolating"] = df.Local_cases - df.Total
 
+    # splitting unknown cases by ratio
+    ratio = np.mean((df.Full + df.Part) / (df.Local_cases - df.Unkn))
+    df["Unkn_inf"] = np.ceil(ratio * df.Unkn)
+    df["Unkn_iso"] = df.Unkn - df.Unkn_inf
+
+    df["Total_infectious"] = df.Full + df.Part + df.Unkn_inf
+
     # some stats
-    for col in ["Full", "Part", "Unkn", "Total", "Isolating", "Local_cases"]:
+    for col in [
+        "Full",
+        "Part",
+        "Unkn",
+        "Unkn_inf",
+        "Total_infectious",
+        "Total",
+        "Isolating",
+        "Local_cases",
+    ]:
         # exponential weighted avg
         df[f"{col}_ewa"] = df[col].ewm(span=7, adjust=False).mean()
 

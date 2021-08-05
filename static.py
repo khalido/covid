@@ -17,7 +17,10 @@ def get_label(col):
         "Full": "Fully infectious\n(Glady's number)",
         "Part": "Partly infections WTF",
         "Unkn": "Unknown, or we don't know",
-        "Total": "Infectious in the community\n(real number)",
+        "Unkn_iso": "unkown cases likely isolating",
+        "Unkn_inf": "Unknow Infectious in the community\nUnknown cases split by historical ratio",
+        "Total_infectious": "Infectious in the community\n(with unknown cases\n split by historical ratio)",
+        "Total": "All infectious + unknown cases",
         "Local_cases": "All cases\nisolating + infectious",
         "Isolating": "iso All cases, isolating + infectious",
     }
@@ -41,7 +44,7 @@ def make_plot(df):
     colors = {}
 
     # draw smoothed lines
-    cols = ["Local_cases", "Total", "Full"]
+    cols = ["Local_cases", "Total_infectious", "Full"]
     for i, col in enumerate(cols[::-1]):
         Y = df[col]
         Y_roll = df[f"{col}_roll"]
@@ -68,33 +71,49 @@ def make_plot(df):
     # ax.step(df.Date, df.Total, "o--", alpha=0.35, color=colors["Total"])
 
     # stacked bar chart
-    alpha = 0.05
-    full = ax.bar(df.Date, df.Full, label="Fully Infectious", alpha=alpha)
+    alpha = 0.06
+    full = ax.bar(df.Date, df.Full, label="Fully Infectious", alpha=0.25, color="red")
     part = ax.bar(
-        df.Date, df.Part, bottom=df.Full, label="Partially Infectious", alpha=alpha
+        df.Date,
+        df.Part,
+        bottom=df.Full,
+        label="Partially Infectious",
+        alpha=0.25,
+        color="orange",
     )
-    unkn = ax.bar(
-        df.Date, df.Unkn, bottom=df.Full + df.Part, label="Not telling us", alpha=0.1
+    unkn_inf = ax.bar(
+        df.Date,
+        df.Unkn_inf,
+        bottom=df.Full + df.Part,
+        label="Unknow Infectious",
+        color="red",
+        alpha=0.15,
     )
-    isolating = ax.bar(
+    unkn_iso = ax.bar(
+        df.Date,
+        df.Unkn_iso,
+        bottom=df.Total_infectious,
+        label="Unknown isolating",
+        color="yellow",
+        alpha=alpha,
+    )  # only drawing for labels
+
+    iso = ax.bar(
         df.Date,
         df.Isolating,
         bottom=df.Total,
         label="Isolating",
-        color=colors["Local_cases"],
+        color="green",
         alpha=alpha,
     )  # only drawing for labels
 
-    for rect in [full, part, unkn, isolating]:  # label the bars in the center
+    for rect in [full]:  # label the bars in the center
         ax.bar_label(rect, label_type="center", alpha=0.4)
 
     # label totals by making a invisible total bar
-    r = ax.bar(df.Date, df.Total, alpha=0)  # only drawing for labels
-    ax.bar_label(r, alpha=0.8, padding=5, fontsize=14, color=colors["Total"])
-
-    ax.bar_label(
-        isolating, alpha=0.8, padding=5, fontsize=12, color=colors["Local_cases"]
-    )
+    for col in ["Local_cases", "Total_infectious"]:
+        r = ax.bar(df.Date, df[col], alpha=0)  # only drawing for labels
+        ax.bar_label(r, alpha=0.8, padding=5, fontsize=12, color=colors[col])
 
     # final plot tweaks
     ax.spines["top"].set_visible(False)
